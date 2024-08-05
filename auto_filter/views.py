@@ -4,7 +4,12 @@ from rest_framework.permissions import IsAuthenticated
 from .models import Vehicle
 from .pagination import VehiclePagination
 from .serializers import VehicleSerializer
-
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from django.http import Http404
+from .models import Vehicle
+from .serializers import VehicleSerializer
 
 class VehicleListCreate(generics.ListCreateAPIView):
     queryset = Vehicle.objects.all()
@@ -40,15 +45,51 @@ class VehicleRetrieveAPIView(generics.RetrieveAPIView):
     queryset = Vehicle.objects.all()
     serializer_class = VehicleSerializer
     permission_classes = [IsAuthenticated]
+    
+    def get_object(self, pk):
+        try:
+            return Vehicle.objects.get(pk=pk)
+        except Vehicle.DoesNotExist:
+            raise Http404
+
+    def get(self, request, pk, format=None):
+        vehicle = self.get_object(pk)
+        serializer = VehicleSerializer(vehicle)
+        return Response(serializer.data)
 
 
 class VehicleUpdateAPIView(generics.UpdateAPIView):
     queryset = Vehicle.objects.all()
     serializer_class = VehicleSerializer
     permission_classes = [IsAuthenticated]
+    
+    def get_object(self, pk):
+        try:
+            return Vehicle.objects.get(pk=pk)
+        except Vehicle.DoesNotExist:
+            raise Http404
+
+    def put(self, request, pk, format=None):
+        vehicle = self.get_object(pk)
+        serializer = VehicleSerializer(vehicle, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class VehicleDestroyAPIView(generics.DestroyAPIView):
     queryset = Vehicle.objects.all()
     serializer_class = VehicleSerializer
     permission_classes = [IsAuthenticated]
+
+    def get_object(self, pk):
+        try:
+            return Vehicle.objects.get(pk=pk)
+        except Vehicle.DoesNotExist:
+            raise Http404
+
+    def delete(self, request, pk, format=None):
+        vehicle = self.get_object(pk)
+        vehicle.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
