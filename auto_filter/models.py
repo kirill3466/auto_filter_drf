@@ -18,7 +18,7 @@ class TransmissionType(models.TextChoices):
 class Vehicle(models.Model):
     brand = models.CharField(
         verbose_name="Марка",
-        max_length=100
+        max_length=100,
     )
     model = models.CharField(
         verbose_name="Модель",
