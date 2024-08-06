@@ -1,12 +1,11 @@
-from rest_framework import generics
+from django.http import Http404
+from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 
 from .models import Vehicle
 from .pagination import VehiclePagination
 from .serializers import VehicleSerializer
-from rest_framework.response import Response
-from rest_framework import status
-from django.http import Http404
 
 
 class VehicleListCreate(generics.ListCreateAPIView):
@@ -43,7 +42,7 @@ class VehicleRetrieveAPIView(generics.RetrieveAPIView):
     queryset = Vehicle.objects.all()
     serializer_class = VehicleSerializer
     permission_classes = [IsAuthenticated]
-    
+
     def get_object(self, pk):
         try:
             return Vehicle.objects.get(pk=pk)
@@ -53,14 +52,14 @@ class VehicleRetrieveAPIView(generics.RetrieveAPIView):
     def get(self, request, pk, format=None):
         vehicle = self.get_object(pk)
         serializer = VehicleSerializer(vehicle)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class VehicleUpdateAPIView(generics.UpdateAPIView):
     queryset = Vehicle.objects.all()
     serializer_class = VehicleSerializer
     permission_classes = [IsAuthenticated]
-    
+
     def get_object(self, pk):
         try:
             return Vehicle.objects.get(pk=pk)

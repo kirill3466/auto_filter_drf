@@ -1,5 +1,11 @@
 from django.urls import path
-from .views import VehicleListCreate, VehicleRetrieveAPIView, VehicleUpdateAPIView, VehicleDestroyAPIView
+
+from .views import (
+    VehicleDestroyAPIView,
+    VehicleListCreate,
+    VehicleRetrieveAPIView,
+    VehicleUpdateAPIView,
+)
 
 urlpatterns = [
     path(
